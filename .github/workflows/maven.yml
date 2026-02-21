@@ -21,14 +21,14 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Build and test with Maven
-      run: mvn -B clean verify
+    - name: Build with Maven
+      run: mvn -B clean package -DskipTests
 
     - name: Package Jar
       run: mvn package
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: subscription-jar
         path: target/*.jar
