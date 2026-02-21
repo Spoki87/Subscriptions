@@ -3,6 +3,7 @@ package com.pawlak.subscription.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 
@@ -23,11 +24,11 @@ public class ApiResponse<T> {
         this.timestamp = Instant.now();
     }
 
-    public static <T> ApiResponse<T> success(String message, T data){
+    public static <T> ApiResponse<T> success(String message, T data, HttpStatus ok){
         return new ApiResponse<>(message, data);
     }
 
-    public static <T> ApiResponse<T> error(String message, String errorCode){
+    public static <T> ApiResponse<T> error(String message){
         return new ApiResponse<>(message, null);
     }
 }
