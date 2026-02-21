@@ -1,0 +1,37 @@
+name: Java 25 CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 25
+      uses: actions/setup-java@v4
+      with:
+        java-version: '25'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build and test with Maven
+      run: mvn -B clean verify
+
+    - name: Package Jar
+      run: mvn package
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: subscription-jar
+        path: target/*.jar
+
+    - name: Update dependency graph
+      uses: advanced-security/maven-dependency-submission-action@v1
