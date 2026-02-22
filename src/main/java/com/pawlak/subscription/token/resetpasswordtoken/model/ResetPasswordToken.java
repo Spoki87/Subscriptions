@@ -1,4 +1,4 @@
-package com.pawlak.subscription.token.registrationtoken.model;
+package com.pawlak.subscription.token.resetpasswordtoken.model;
 
 import com.pawlak.subscription.user.model.User;
 import jakarta.persistence.*;
@@ -11,8 +11,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor
-public class RegistrationToken {
-
+public class ResetPasswordToken {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -27,7 +26,7 @@ public class RegistrationToken {
     @JoinColumn(nullable = false, name = "app_user_id")
     private User user;
 
-    public RegistrationToken(User user, String token){
+    public ResetPasswordToken(User user, String token){
         this.createdTime = LocalDateTime.now();
         this.expiredTime = LocalDateTime.now().plusHours(12);
         this.token = token;

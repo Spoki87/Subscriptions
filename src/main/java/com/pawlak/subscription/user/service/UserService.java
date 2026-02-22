@@ -1,13 +1,16 @@
 package com.pawlak.subscription.user.service;
 
+import com.pawlak.subscription.exception.domain.InvalidPasswordException;
 import com.pawlak.subscription.exception.domain.UserNotFoundException;
 import com.pawlak.subscription.token.registrationtoken.service.RegistrationTokenService;
+import com.pawlak.subscription.user.dto.request.ChangePasswordRequest;
 import com.pawlak.subscription.user.dto.request.CreateUserRequest;
 import com.pawlak.subscription.user.dto.response.UserResponse;
 import com.pawlak.subscription.user.model.User;
 import com.pawlak.subscription.user.model.Role;
 import com.pawlak.subscription.user.repository.UserRepository;
 import com.pawlak.subscription.exception.domain.EmailAlreadyTakenException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,5 +55,17 @@ public class UserService implements UserDetailsService {
                 user.getEmail(),
                 user.getRole()
         );
+    }
+
+    public void changePassword(User user, ChangePasswordRequest request) {
+        if(!bCryptPasswordEncoder.matches(request.getCurrentPassword(), user.getPassword())){
+            throw new InvalidPasswordException();
+        }
+        user.setPassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    public void confirmRegistration(String token) {
+        registrationTokenService.confirmRegistration(token);
     }
 }
