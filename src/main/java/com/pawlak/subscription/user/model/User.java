@@ -1,6 +1,7 @@
 package com.pawlak.subscription.user.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,9 +15,8 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@Setter
 @Table(name = "app_user")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -39,6 +39,14 @@ public class User implements UserDetails {
         this.password = password;
         this.role = role;
         this.enabled = false;
+    }
+
+    public void enable() {
+        this.enabled = true;
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 
     @Override

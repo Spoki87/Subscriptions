@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
         if(!bCryptPasswordEncoder.matches(request.getCurrentPassword(), user.getPassword())){
             throw new InvalidPasswordException();
         }
-        user.setPassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
+        user.changePassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
 

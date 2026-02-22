@@ -5,6 +5,7 @@ import com.pawlak.subscription.exception.domain.RegistrationTokenNotFoundExcepti
 import com.pawlak.subscription.token.registrationtoken.model.RegistrationToken;
 import com.pawlak.subscription.token.registrationtoken.repository.RegistrationTokenRepository;
 import com.pawlak.subscription.user.model.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class RegistrationTokenService {
         registrationTokenRepository.save(registrationUserToken);
     }
 
+    @Transactional
     public void confirmRegistration(String token) {
         RegistrationToken registrationToken = registrationTokenRepository.findByToken(token)
                 .orElseThrow(RegistrationTokenNotFoundException::new);
@@ -34,8 +36,7 @@ public class RegistrationTokenService {
             registrationTokenRepository.delete(registrationToken);
             throw new RegistrationTokenExpiredException("Token has expired");
         }
-
-        registrationToken.getUser().setEnabled(true);
+        registrationToken.getUser().enable();
         registrationTokenRepository.delete(registrationToken);
     }
 }
