@@ -1,4 +1,4 @@
-package com.pawlak.subscription.appuser.model;
+package com.pawlak.subscription.user.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @Setter
 @Table(name = "app_user")
 @NoArgsConstructor
-public class Appuser implements UserDetails {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -28,17 +28,17 @@ public class Appuser implements UserDetails {
 
     private String password;
 
-    private boolean locked;
+    private boolean enabled;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public Appuser(String username, String email, String password,Role role) {
+    public User(String username, String email, String password, Role role) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
-        this.locked = false;
+        this.enabled = false;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class Appuser implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !locked;
+        return true;
     }
 
     @Override
@@ -63,6 +63,6 @@ public class Appuser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

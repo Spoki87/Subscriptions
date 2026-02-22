@@ -1,4 +1,4 @@
-package com.pawlak.subscription.appuser.dto.request;
+package com.pawlak.subscription.auth.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Valid
 @Getter
-public class AuthenticateUserRequest {
+public class AuthenticateRequest {
     @NotBlank(message = "Email is required. Please provide a valid email address")
     @Email(message = "The email format is invalid. Please provide a valid email")
     String email;

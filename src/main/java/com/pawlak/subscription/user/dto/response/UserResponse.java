@@ -1,6 +1,6 @@
-package com.pawlak.subscription.appuser.dto.response;
+package com.pawlak.subscription.user.dto.response;
 
-import com.pawlak.subscription.appuser.model.Role;
+import com.pawlak.subscription.user.model.Role;
 import lombok.Value;
 
 import java.util.UUID;

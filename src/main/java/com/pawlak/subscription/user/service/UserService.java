@@ -1,12 +1,13 @@
-package com.pawlak.subscription.appuser.service;
+package com.pawlak.subscription.user.service;
 
-import com.pawlak.subscription.appuser.dto.request.CreateUserRequest;
-import com.pawlak.subscription.appuser.dto.response.UserResponse;
-import com.pawlak.subscription.appuser.model.Appuser;
-import com.pawlak.subscription.appuser.model.Role;
-import com.pawlak.subscription.appuser.repository.UserRepository;
-import com.pawlak.subscription.exception.domain.EmailAlreadyTakenException;
 import com.pawlak.subscription.exception.domain.UserNotFoundException;
+import com.pawlak.subscription.token.registrationtoken.service.RegistrationTokenService;
+import com.pawlak.subscription.user.dto.request.CreateUserRequest;
+import com.pawlak.subscription.user.dto.response.UserResponse;
+import com.pawlak.subscription.user.model.User;
+import com.pawlak.subscription.user.model.Role;
+import com.pawlak.subscription.user.repository.UserRepository;
+import com.pawlak.subscription.exception.domain.EmailAlreadyTakenException;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final RegistrationTokenService registrationTokenService;
 
     @Override
     public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
@@ -36,13 +38,14 @@ public class UserService implements UserDetailsService {
             throw new EmailAlreadyTakenException();
         }
 
-        Appuser user = new Appuser(
+        User user = new User(
                 request.getUsername(),
                 request.getEmail(),
                 bCryptPasswordEncoder.encode(request.getPassword()),
                 Role.USER);
 
         userRepository.save(user);
+        registrationTokenService.createToken(user);
 
         return new UserResponse(
                 user.getId(),

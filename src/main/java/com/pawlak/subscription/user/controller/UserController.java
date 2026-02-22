@@ -1,8 +1,8 @@
-package com.pawlak.subscription.appuser.controller;
+package com.pawlak.subscription.user.controller;
 
-import com.pawlak.subscription.appuser.dto.request.CreateUserRequest;
-import com.pawlak.subscription.appuser.dto.response.UserResponse;
-import com.pawlak.subscription.appuser.service.UserService;
+import com.pawlak.subscription.user.dto.request.CreateUserRequest;
+import com.pawlak.subscription.user.dto.response.UserResponse;
+import com.pawlak.subscription.user.service.UserService;
 import com.pawlak.subscription.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

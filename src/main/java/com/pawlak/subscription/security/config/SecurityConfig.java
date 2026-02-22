@@ -1,6 +1,5 @@
 package com.pawlak.subscription.security.config;
 
-import com.pawlak.subscription.security.AuthenticationManagerConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +29,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(registry->{
                     registry.requestMatchers("/api/user/**").permitAll();
+                    registry.requestMatchers("/api/auth/**").permitAll();
                     registry.requestMatchers(
                             "/swagger-ui/**",
                             "/v3/api-docs/**",

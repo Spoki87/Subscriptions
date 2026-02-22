@@ -1,4 +1,4 @@
-package com.pawlak.subscription.appuser.dto.request;
+package com.pawlak.subscription.user.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
