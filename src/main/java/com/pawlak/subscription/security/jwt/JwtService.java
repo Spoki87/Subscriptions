@@ -1,4 +1,4 @@
-package com.pawlak.subscription.security.config;
+package com.pawlak.subscription.security.jwt;
 
 import com.pawlak.subscription.user.model.User;
 import io.jsonwebtoken.Claims;
@@ -48,7 +48,7 @@ public class JwtService {
                 .setClaims(extractClaims)
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

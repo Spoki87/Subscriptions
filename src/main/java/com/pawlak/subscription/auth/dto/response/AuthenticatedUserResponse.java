@@ -6,5 +6,6 @@ import lombok.Value;
 @Value
 public class AuthenticatedUserResponse {
     Role role;
-    String token;
+    String accessToken;
+    String refreshToken;
 }
