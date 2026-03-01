@@ -21,7 +21,7 @@ public class RefreshToken {
     private LocalDateTime sessionExpiryDate;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "app_user_id")
+    @JoinColumn(name = "app_user_id")
     private User user;
 
     private boolean revoked = false;

@@ -19,7 +19,7 @@ public class RefreshTokenService {
     private final TokenHashService tokenHashService;
 
 
-    public RefreshToken createInitialToken(User user) {
+    public String createInitialToken(User user) {
         String rawToken = generateRawToken();
 
         RefreshToken refreshToken = new RefreshToken(
@@ -29,10 +29,10 @@ public class RefreshTokenService {
                 user
         );
         refreshTokenRepository.save(refreshToken);
-        return refreshToken;
+        return rawToken;
     }
 
-    public RefreshToken rotateToken(String rawToken){
+    public String rotateToken(String rawToken){
         RefreshToken currentToken = validate(rawToken);
 
         currentToken.revoke();
@@ -46,7 +46,7 @@ public class RefreshTokenService {
                 currentToken.getUser()
         );
         refreshTokenRepository.save(newRefreshToken);
-        return newRefreshToken;
+        return newRawToken;
     }
 
     public RefreshToken validate(String token) {
@@ -71,5 +71,10 @@ public class RefreshTokenService {
 
     private LocalDateTime now() {
         return LocalDateTime.now();
+    }
+
+    public void revoke(RefreshToken refreshToken) {
+        refreshToken.revoke();
+        refreshTokenRepository.save(refreshToken);
     }
 }

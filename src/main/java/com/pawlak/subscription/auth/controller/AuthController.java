@@ -1,10 +1,11 @@
 package com.pawlak.subscription.auth.controller;
 
 import com.pawlak.subscription.auth.dto.request.AuthenticateRequest;
+import com.pawlak.subscription.auth.dto.request.LogoutRequest;
+import com.pawlak.subscription.auth.dto.request.RefreshTokenRequest;
 import com.pawlak.subscription.auth.dto.response.AuthenticatedUserResponse;
 import com.pawlak.subscription.auth.service.AuthService;
 import com.pawlak.subscription.response.ApiResponse;
-import com.pawlak.subscription.security.refresh.RefreshToken;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,14 +31,14 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
-        /* to do refresh */
-        return null;
+    public ResponseEntity<ApiResponse<AuthenticatedUserResponse>> refresh(@RequestBody RefreshTokenRequest request) {
+        AuthenticatedUserResponse response = authService.refreshToken(request);
+        return ResponseEntity.ok(ApiResponse.success("Token refreshed successfully",response, HttpStatus.OK));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody RefreshRequest request) {
-        /* to do logout */
-        return null;
+    public ResponseEntity<ApiResponse<Void>> logout(@RequestBody LogoutRequest request) {
+        authService.logout(request);
+        return ResponseEntity.ok(ApiResponse.success("Logged out successfully",null, HttpStatus.OK));
     }
 }
