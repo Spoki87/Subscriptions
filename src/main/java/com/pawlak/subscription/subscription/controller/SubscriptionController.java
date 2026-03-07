@@ -1,6 +1,8 @@
 package com.pawlak.subscription.subscription.controller;
 
 import com.pawlak.subscription.response.ApiResponse;
+import com.pawlak.subscription.subscription.dto.request.CreateSubscriptionRequest;
+import com.pawlak.subscription.subscription.dto.request.UpdateSubscriptionRequest;
 import com.pawlak.subscription.subscription.dto.response.SubscriptionResponse;
 import com.pawlak.subscription.subscription.service.SubscriptionService;
 import com.pawlak.subscription.user.model.User;
@@ -36,14 +38,14 @@ public class SubscriptionController {
     }
 
     @PostMapping()
-    public ResponseEntity<ApiResponse<SubscriptionResponse>> createSubscription(@AuthenticationPrincipal User user) {
-        SubscriptionResponse response = subscriptionService.createSubscription(user);
+    public ResponseEntity<ApiResponse<SubscriptionResponse>> createSubscription(@AuthenticationPrincipal User user, @RequestBody CreateSubscriptionRequest request) {
+        SubscriptionResponse response = subscriptionService.createSubscription(user,request);
         return ResponseEntity.ok(ApiResponse.success("Subscription created",response));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<SubscriptionResponse>> updateSubscription(@AuthenticationPrincipal User user, @RequestParam UUID id) {
-        SubscriptionResponse response = subscriptionService.updateSubscriptionById(user, id);
+    public ResponseEntity<ApiResponse<SubscriptionResponse>> updateSubscription(@AuthenticationPrincipal User user, @RequestParam UUID id, @RequestBody UpdateSubscriptionRequest request) {
+        SubscriptionResponse response = subscriptionService.updateSubscriptionById(user, id, request);
         return ResponseEntity.ok(ApiResponse.success("Subscription updated",response));
     }
 

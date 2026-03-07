@@ -1,8 +1,9 @@
 package com.pawlak.subscription.subscription.service;
 
-import com.pawlak.subscription.exception.domain.InvalidPermissionAccessException;
 import com.pawlak.subscription.exception.domain.RecordNotFoundException;
 import com.pawlak.subscription.subscription.Repository.SubscriptionRepository;
+import com.pawlak.subscription.subscription.dto.request.CreateSubscriptionRequest;
+import com.pawlak.subscription.subscription.dto.request.UpdateSubscriptionRequest;
 import com.pawlak.subscription.subscription.dto.response.SubscriptionResponse;
 import com.pawlak.subscription.subscription.mapper.SubscriptionMapper;
 import com.pawlak.subscription.subscription.model.Subscription;
@@ -22,28 +23,36 @@ public class SubscriptionService {
     private final SubscriptionMapper subscriptionMapper;
 
     public Page<SubscriptionResponse> getSubscriptionsByUser(User user, Pageable pageable) {
-        Page<Subscription> subscriptions = subscriptionRepository.findAllByUser(user, pageable);
-        return subscriptions.map(subscription -> new SubscriptionResponse());
+        return subscriptionRepository.findAllByUser(user, pageable)
+                .map(subscriptionMapper::toResponse);
     }
 
     public SubscriptionResponse getSubscriptionById(User user, UUID id) {
-        Subscription subscription = subscriptionRepository.findById(id)
+        return subscriptionRepository.findByIdAndUser(id, user)
+                .map(subscriptionMapper::toResponse)
                 .orElseThrow(RecordNotFoundException::new);
-        if (!subscription.getUser().getId().equals(user.getId())) {
-            throw new InvalidPermissionAccessException();
-        }
+    }
 
+    public SubscriptionResponse createSubscription(User user, CreateSubscriptionRequest request) {
+        Subscription subscription = subscriptionMapper.toEntity(request);
+        subscription.setUser(user);
+        subscriptionRepository.save(subscription);
         return subscriptionMapper.toResponse(subscription);
     }
 
-    public SubscriptionResponse createSubscription(User user) {
-        return new SubscriptionResponse();
-    }
+    public SubscriptionResponse updateSubscriptionById(User user, UUID id, UpdateSubscriptionRequest request) {
+        Subscription subscription = subscriptionRepository.findByIdAndUser(id, user)
+                .orElseThrow(RecordNotFoundException::new);
 
-    public SubscriptionResponse updateSubscriptionById(User user, UUID id) {
-        return new SubscriptionResponse();
+        subscriptionMapper.updateEntityFromRequest(request, subscription);
+        subscriptionRepository.save(subscription);
+        return subscriptionMapper.toResponse(subscription);
     }
 
     public void deleteSubscriptionById(User user, UUID id) {
+        Subscription subscription = subscriptionRepository.findByIdAndUser(id, user)
+                .orElseThrow(RecordNotFoundException::new);
+
+        subscriptionRepository.delete(subscription);
     }
 }
