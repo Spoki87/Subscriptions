@@ -12,7 +12,6 @@ import org.mapstruct.MappingTarget;
 public interface SubscriptionMapper {
     SubscriptionResponse toResponse(Subscription subscription);
     void updateEntityFromRequest(UpdateSubscriptionRequest request, @MappingTarget Subscription subscription);
-
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "id", ignore = true)
     Subscription toEntity(CreateSubscriptionRequest request);

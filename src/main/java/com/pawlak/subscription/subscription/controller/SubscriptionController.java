@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +31,7 @@ public class SubscriptionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<SubscriptionResponse>> getSubscriptionById(@AuthenticationPrincipal User user, @RequestParam UUID id) {
+    public ResponseEntity<ApiResponse<SubscriptionResponse>> getSubscriptionById(@AuthenticationPrincipal User user, @PathVariable UUID id) {
         SubscriptionResponse response = subscriptionService.getSubscriptionById(user, id);
         return ResponseEntity.ok(ApiResponse.success("Subscription found",response));
     }
@@ -44,13 +43,13 @@ public class SubscriptionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<SubscriptionResponse>> updateSubscription(@AuthenticationPrincipal User user, @RequestParam UUID id, @RequestBody UpdateSubscriptionRequest request) {
+    public ResponseEntity<ApiResponse<SubscriptionResponse>> updateSubscription(@AuthenticationPrincipal User user, @PathVariable UUID id, @RequestBody UpdateSubscriptionRequest request) {
         SubscriptionResponse response = subscriptionService.updateSubscriptionById(user, id, request);
         return ResponseEntity.ok(ApiResponse.success("Subscription updated",response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteSubscription(@AuthenticationPrincipal User user, @RequestParam UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteSubscription(@AuthenticationPrincipal User user, @PathVariable UUID id) {
         subscriptionService.deleteSubscriptionById(user, id);
         return ResponseEntity.ok(ApiResponse.success("Subscription deleted"));
     }

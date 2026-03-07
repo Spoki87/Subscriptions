@@ -1,11 +1,11 @@
 package com.pawlak.subscription.subscription.dto.response;
 
-import lombok.Getter;
+import lombok.Value;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Getter
+@Value
 public class SubscriptionResponse {
     UUID id;
     String name;
