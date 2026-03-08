@@ -1,15 +1,9 @@
 pipeline {
-     agent {
-            docker {
-                image 'maven:3.9.1-eclipse-temurin-21'
-            }
+    agent {
+        docker {
+            image 'maven:3.9.1-eclipse-temurin-21'
         }
-        stages {
-            stage('Build JAR') {
-                steps {
-                    sh 'mvn -B clean package -DskipTests'
-                }
-            }
+    }
 
     environment {
         IMAGE_NAME = "subscription-spring-app"
@@ -52,7 +46,7 @@ pipeline {
                   --env-file /opt/env/spring.env \
                   -e SPRING_PROFILES_ACTIVE=prod \
                   -p 8082:8080 \
-                  subscription-spring-app:$IMAGE_TAG
+                  $IMAGE_NAME:$IMAGE_TAG
                 '''
             }
         }
@@ -62,5 +56,6 @@ pipeline {
                 sh 'docker image prune -f'
             }
         }
+
     }
 }
