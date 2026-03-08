@@ -15,35 +15,33 @@ pipeline {
             }
         }
 
-        stage('Build JAR') {
-            steps {
-                sh 'docker run --rm -v $PWD:/app -w /app maven:3.9.1-eclipse-temurin-21 mvn -B clean package -DskipTests'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                sh """
+                docker build -t $IMAGE_NAME:$IMAGE_TAG -f Dockerfile .
+                """
             }
         }
 
         stage('Stop old container') {
             steps {
-                sh 'docker stop $CONTAINER_NAME || true'
-                sh 'docker rm $CONTAINER_NAME || true'
+                sh """
+                docker stop $CONTAINER_NAME || true
+                docker rm $CONTAINER_NAME || true
+                """
             }
         }
 
         stage('Run container') {
             steps {
-                sh '''
+                sh """
                 docker run -d \
                   --name $CONTAINER_NAME \
                   --env-file /opt/env/spring.env \
                   -e SPRING_PROFILES_ACTIVE=prod \
                   -p 8082:8080 \
                   $IMAGE_NAME:$IMAGE_TAG
-                '''
+                """
             }
         }
 
