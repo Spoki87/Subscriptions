@@ -4,11 +4,6 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
   mail:
     host: ${EMAIL_SMTP_URL}
     port: 587
@@ -20,6 +15,7 @@ spring:
           auth: true
           starttls:
             enable: true
+
   app:
     base_url: ${BASE_URL}
 
