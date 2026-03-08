@@ -1,7 +1,9 @@
 package com.pawlak.subscription.token.registrationtoken.service;
 
+import com.pawlak.subscription.email.EmailSender;
 import com.pawlak.subscription.exception.domain.RegistrationTokenExpiredException;
 import com.pawlak.subscription.exception.domain.RegistrationTokenNotFoundException;
+import com.pawlak.subscription.token.emailbuilder.TokenEmailTemplateBuilder;
 import com.pawlak.subscription.token.registrationtoken.model.RegistrationToken;
 import com.pawlak.subscription.token.registrationtoken.repository.RegistrationTokenRepository;
 import com.pawlak.subscription.user.model.User;
@@ -17,12 +19,17 @@ import java.util.UUID;
 public class RegistrationTokenService {
 
     private final RegistrationTokenRepository registrationTokenRepository;
+    private final TokenEmailTemplateBuilder tokenEmailTemplateBuilder;
+    private final EmailSender emailSender;
 
     public void createToken(User user) {
 
         String token = UUID.randomUUID().toString();
 
         RegistrationToken registrationUserToken = new RegistrationToken(user,token);
+
+        String html = tokenEmailTemplateBuilder.buildConfirmationEmail(token);
+        emailSender.send(registrationUserToken.getUser().getEmail(),html,"Confirm registration");
 
         registrationTokenRepository.save(registrationUserToken);
     }

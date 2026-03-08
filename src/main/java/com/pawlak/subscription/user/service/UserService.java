@@ -1,10 +1,13 @@
 package com.pawlak.subscription.user.service;
 
+import com.pawlak.subscription.email.EmailSender;
 import com.pawlak.subscription.exception.domain.InvalidPasswordException;
 import com.pawlak.subscription.exception.domain.UserNotFoundException;
 import com.pawlak.subscription.token.registrationtoken.service.RegistrationTokenService;
+import com.pawlak.subscription.token.resetpasswordtoken.service.ResetPasswordTokenService;
 import com.pawlak.subscription.user.dto.request.ChangePasswordRequest;
 import com.pawlak.subscription.user.dto.request.CreateUserRequest;
+import com.pawlak.subscription.user.dto.request.NewPasswordRequest;
 import com.pawlak.subscription.user.dto.response.UserResponse;
 import com.pawlak.subscription.user.model.User;
 import com.pawlak.subscription.user.model.Role;
@@ -25,6 +28,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RegistrationTokenService registrationTokenService;
+    private final ResetPasswordTokenService resetPasswordTokenService;
 
     @Override
     public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
@@ -66,5 +70,15 @@ public class UserService implements UserDetailsService {
 
     public void confirmRegistration(String token) {
         registrationTokenService.confirmRegistration(token);
+    }
+
+    public void resetPassword(User user) {
+        resetPasswordTokenService.createToken(user);
+    }
+
+    public void setNewPassword(User user, NewPasswordRequest request) {
+        resetPasswordTokenService.confirmToken(request.getToken());
+        user.changePassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

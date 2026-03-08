@@ -9,6 +9,20 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  mail:
+    host: ${EMAIL_SMTP_URL}
+    port: 587
+    username: ${EMAIL_USER}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  app:
+    base_url: ${BASE_URL}
+
 server:
   port: 8080
 

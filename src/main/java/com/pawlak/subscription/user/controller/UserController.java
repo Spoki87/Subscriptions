@@ -2,6 +2,7 @@ package com.pawlak.subscription.user.controller;
 
 import com.pawlak.subscription.user.dto.request.ChangePasswordRequest;
 import com.pawlak.subscription.user.dto.request.CreateUserRequest;
+import com.pawlak.subscription.user.dto.request.NewPasswordRequest;
 import com.pawlak.subscription.user.dto.response.UserResponse;
 import com.pawlak.subscription.user.model.User;
 import com.pawlak.subscription.user.service.UserService;
@@ -39,4 +40,15 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("Password changed"));
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<String>> resetPassword(@AuthenticationPrincipal User user){
+        userService.resetPassword(user);
+        return ResponseEntity.ok(ApiResponse.success("Code sent to your email"));
+    }
+
+    @PostMapping("/set-new-password")
+    public ResponseEntity<ApiResponse<String>> setNewPassword(@AuthenticationPrincipal User user, @RequestBody NewPasswordRequest request){
+        userService.setNewPassword(user,request);
+        return ResponseEntity.ok(ApiResponse.success("New password set"));
+    }
 }
