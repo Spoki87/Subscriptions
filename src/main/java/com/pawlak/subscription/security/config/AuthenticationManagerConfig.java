@@ -1,6 +1,6 @@
 package com.pawlak.subscription.security.config;
 
-import com.pawlak.subscription.security.PasswordEncoder;
+import com.pawlak.subscription.security.PasswordConfig;
 import com.pawlak.subscription.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 public class AuthenticationManagerConfig {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordConfig passwordConfig;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
@@ -25,7 +25,7 @@ public class AuthenticationManagerConfig {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userService);
-        provider.setPasswordEncoder(passwordEncoder.bCryptPasswordEncoder());
+        provider.setPasswordEncoder(passwordConfig.bCryptPasswordEncoder());
         return provider;
     }
 

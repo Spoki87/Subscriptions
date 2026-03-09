@@ -1,7 +1,7 @@
 package com.pawlak.subscription.subscription.service;
 
 import com.pawlak.subscription.exception.domain.RecordNotFoundException;
-import com.pawlak.subscription.subscription.Repository.SubscriptionRepository;
+import com.pawlak.subscription.subscription.repository.SubscriptionRepository;
 import com.pawlak.subscription.subscription.dto.request.CreateSubscriptionRequest;
 import com.pawlak.subscription.subscription.dto.request.UpdateSubscriptionRequest;
 import com.pawlak.subscription.subscription.dto.response.SubscriptionResponse;

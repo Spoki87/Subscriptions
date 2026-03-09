@@ -1,4 +1,4 @@
-package com.pawlak.subscription.subscription.Repository;
+package com.pawlak.subscription.subscription.repository;
 
 import com.pawlak.subscription.subscription.model.Subscription;
 import com.pawlak.subscription.user.model.User;
