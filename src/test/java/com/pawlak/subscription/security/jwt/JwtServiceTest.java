@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.Duration;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -21,7 +23,9 @@ class JwtServiceTest {
 
     @BeforeEach
     void setUp() {
-        jwtService = new JwtService();
+        JwtProperties jwtProperties = new JwtProperties();
+        jwtProperties.setExpirationTime(Duration.ofMinutes(15));
+        jwtService = new JwtService(jwtProperties);
         ReflectionTestUtils.setField(jwtService, "SECRET_KEY", TEST_SECRET);
         user = new User("testuser", "test@email.com", "password", Role.USER);
     }

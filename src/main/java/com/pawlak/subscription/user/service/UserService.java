@@ -1,8 +1,8 @@
 package com.pawlak.subscription.user.service;
 
-import com.pawlak.subscription.email.EmailSender;
 import com.pawlak.subscription.exception.domain.InvalidPasswordException;
 import com.pawlak.subscription.exception.domain.UserNotFoundException;
+import com.pawlak.subscription.security.refresh.RefreshTokenService;
 import com.pawlak.subscription.token.registrationtoken.service.RegistrationTokenService;
 import com.pawlak.subscription.token.resetpasswordtoken.service.ResetPasswordTokenService;
 import com.pawlak.subscription.user.dto.request.ChangePasswordRequest;
@@ -13,6 +13,7 @@ import com.pawlak.subscription.user.model.User;
 import com.pawlak.subscription.user.model.Role;
 import com.pawlak.subscription.user.repository.UserRepository;
 import com.pawlak.subscription.exception.domain.EmailAlreadyTakenException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +30,7 @@ public class UserService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RegistrationTokenService registrationTokenService;
     private final ResetPasswordTokenService resetPasswordTokenService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
@@ -60,12 +62,14 @@ public class UserService implements UserDetailsService {
         );
     }
 
+    @Transactional
     public void changePassword(User user, ChangePasswordRequest request) {
         if(!bCryptPasswordEncoder.matches(request.getCurrentPassword(), user.getPassword())){
             throw new InvalidPasswordException();
         }
         user.changePassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+        refreshTokenService.revokeAllForUser(user.getId());
     }
 
     public void confirmRegistration(String token) {
@@ -76,9 +80,11 @@ public class UserService implements UserDetailsService {
         resetPasswordTokenService.createToken(user);
     }
 
+    @Transactional
     public void setNewPassword(User user, NewPasswordRequest request) {
         resetPasswordTokenService.confirmToken(request.getToken());
         user.changePassword(bCryptPasswordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+        refreshTokenService.revokeAllForUser(user.getId());
     }
 }

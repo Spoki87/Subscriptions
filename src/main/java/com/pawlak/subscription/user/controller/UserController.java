@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/set-new-password")
-    public ResponseEntity<ApiResponse<String>> setNewPassword(@AuthenticationPrincipal User user, @RequestBody NewPasswordRequest request){
+    public ResponseEntity<ApiResponse<String>> setNewPassword(@AuthenticationPrincipal User user, @Valid @RequestBody NewPasswordRequest request){
         userService.setNewPassword(user,request);
         return ResponseEntity.ok(ApiResponse.success("New password set"));
     }

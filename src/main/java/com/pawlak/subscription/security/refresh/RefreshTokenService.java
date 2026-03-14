@@ -4,6 +4,7 @@ import com.pawlak.subscription.exception.domain.InvalidRefreshTokenException;
 import com.pawlak.subscription.exception.domain.RefreshTokenExpiredException;
 import com.pawlak.subscription.security.jwt.JwtProperties;
 import com.pawlak.subscription.user.model.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class RefreshTokenService {
         return rawToken;
     }
 
+    @Transactional
     public String rotateToken(String rawToken){
         RefreshToken currentToken = validate(rawToken);
 
@@ -76,5 +78,10 @@ public class RefreshTokenService {
     public void revoke(RefreshToken refreshToken) {
         refreshToken.revoke();
         refreshTokenRepository.save(refreshToken);
+    }
+
+    @Transactional
+    public void revokeAllForUser(UUID userId) {
+        refreshTokenRepository.deleteAllByUserId(userId);
     }
 }

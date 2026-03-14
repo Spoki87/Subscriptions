@@ -3,6 +3,7 @@ package com.pawlak.subscription.user.service;
 import com.pawlak.subscription.exception.domain.EmailAlreadyTakenException;
 import com.pawlak.subscription.exception.domain.InvalidPasswordException;
 import com.pawlak.subscription.exception.domain.UserNotFoundException;
+import com.pawlak.subscription.security.refresh.RefreshTokenService;
 import com.pawlak.subscription.token.registrationtoken.service.RegistrationTokenService;
 import com.pawlak.subscription.token.resetpasswordtoken.service.ResetPasswordTokenService;
 import com.pawlak.subscription.user.dto.request.ChangePasswordRequest;
@@ -47,6 +48,9 @@ class UserServiceTest {
 
     @Mock
     private ResetPasswordTokenService resetPasswordTokenService;
+
+    @Mock
+    private RefreshTokenService refreshTokenService;
 
     @InjectMocks
     private UserService userService;

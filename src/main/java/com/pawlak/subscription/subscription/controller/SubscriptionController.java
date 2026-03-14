@@ -6,6 +6,7 @@ import com.pawlak.subscription.subscription.dto.request.UpdateSubscriptionReques
 import com.pawlak.subscription.subscription.dto.response.SubscriptionResponse;
 import com.pawlak.subscription.subscription.service.SubscriptionService;
 import com.pawlak.subscription.user.model.User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,13 +38,13 @@ public class SubscriptionController {
     }
 
     @PostMapping()
-    public ResponseEntity<ApiResponse<SubscriptionResponse>> createSubscription(@AuthenticationPrincipal User user, @RequestBody CreateSubscriptionRequest request) {
+    public ResponseEntity<ApiResponse<SubscriptionResponse>> createSubscription(@AuthenticationPrincipal User user, @Valid @RequestBody CreateSubscriptionRequest request) {
         SubscriptionResponse response = subscriptionService.createSubscription(user,request);
         return ResponseEntity.ok(ApiResponse.success("Subscription created",response));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<SubscriptionResponse>> updateSubscription(@AuthenticationPrincipal User user, @PathVariable UUID id, @RequestBody UpdateSubscriptionRequest request) {
+    public ResponseEntity<ApiResponse<SubscriptionResponse>> updateSubscription(@AuthenticationPrincipal User user, @PathVariable UUID id, @Valid @RequestBody UpdateSubscriptionRequest request) {
         SubscriptionResponse response = subscriptionService.updateSubscriptionById(user, id, request);
         return ResponseEntity.ok(ApiResponse.success("Subscription updated",response));
     }

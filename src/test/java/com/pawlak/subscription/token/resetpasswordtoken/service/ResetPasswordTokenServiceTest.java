@@ -1,6 +1,8 @@
 package com.pawlak.subscription.token.resetpasswordtoken.service;
 
 import com.pawlak.subscription.email.EmailSender;
+import com.pawlak.subscription.exception.domain.ResetPasswordTokenExpiredException;
+import com.pawlak.subscription.exception.domain.ResetPasswordTokenNotFoundException;
 import com.pawlak.subscription.token.emailbuilder.TokenEmailTemplateBuilder;
 import com.pawlak.subscription.token.resetpasswordtoken.model.ResetPasswordToken;
 import com.pawlak.subscription.token.resetpasswordtoken.repository.ResetPasswordTokenRepository;
@@ -78,25 +80,23 @@ class ResetPasswordTokenServiceTest {
         }
 
         @Test
-        @DisplayName("throws IllegalArgumentException when token not found")
+        @DisplayName("throws ResetPasswordTokenNotFoundException when token not found")
         void throwsWhenTokenNotFound() {
             when(resetPasswordTokenRepository.findByToken("unknown-token")).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> resetPasswordTokenService.confirmToken("unknown-token"))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Invalid token");
+                    .isInstanceOf(ResetPasswordTokenNotFoundException.class);
         }
 
         @Test
-        @DisplayName("throws IllegalArgumentException when token is expired")
+        @DisplayName("throws ResetPasswordTokenExpiredException when token is expired")
         void throwsWhenTokenExpired() {
             ResetPasswordToken expiredToken = mock(ResetPasswordToken.class);
             when(expiredToken.getExpiredTime()).thenReturn(LocalDateTime.now().minusHours(1));
             when(resetPasswordTokenRepository.findByToken("expired-token")).thenReturn(Optional.of(expiredToken));
 
             assertThatThrownBy(() -> resetPasswordTokenService.confirmToken("expired-token"))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Token has expired");
+                    .isInstanceOf(ResetPasswordTokenExpiredException.class);
         }
     }
 }
