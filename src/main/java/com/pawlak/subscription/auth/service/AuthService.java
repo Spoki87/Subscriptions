@@ -30,7 +30,7 @@ public class AuthService {
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = refreshTokenService.createInitialToken(user);
 
-        return new AuthenticatedUserResponse(user.getRole(),jwtToken,refreshToken);
+        return new AuthenticatedUserResponse(user.getRole(),user.getCurrency(),jwtToken,refreshToken);
     }
 
     public AuthenticatedUserResponse refreshToken(RefreshTokenRequest request) {
@@ -42,7 +42,7 @@ public class AuthService {
         String newRawRefreshToken = refreshTokenService.rotateToken(rawRefreshToken);
         String jwtToken = jwtService.generateToken(user);
 
-        return new AuthenticatedUserResponse(user.getRole(),jwtToken,newRawRefreshToken);
+        return new AuthenticatedUserResponse(user.getRole(),user.getCurrency(),jwtToken,newRawRefreshToken);
     }
 
     public void logout(LogoutRequest request) {
