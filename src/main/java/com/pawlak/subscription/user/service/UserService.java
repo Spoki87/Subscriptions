@@ -37,6 +37,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
+    @Transactional
     public UserResponse register(CreateUserRequest request){
 
         boolean userExist = userRepository.findByEmail(request.getEmail()).isPresent();

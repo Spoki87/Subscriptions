@@ -10,6 +10,7 @@ import com.pawlak.subscription.subscription.dto.response.SubscriptionResponse;
 import com.pawlak.subscription.subscription.mapper.SubscriptionMapper;
 import com.pawlak.subscription.subscription.model.Subscription;
 import com.pawlak.subscription.user.model.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +37,7 @@ public class SubscriptionService {
                 .orElseThrow(RecordNotFoundException::new);
     }
 
+    @Transactional
     public SubscriptionResponse createSubscription(User user, CreateSubscriptionRequest request) {
         Subscription subscription = subscriptionMapper.toEntity(request);
         subscription.setUser(user);
@@ -43,6 +45,7 @@ public class SubscriptionService {
         BigDecimal convertedPrice = exchangeRateService.convert(subscription.getPrice(), subscription.getCurrency(),user.getCurrency());
         return subscriptionMapper.toResponse(subscription,convertedPrice,user.getCurrency());    }
 
+    @Transactional
     public SubscriptionResponse updateSubscriptionById(User user, UUID id, UpdateSubscriptionRequest request) {
         Subscription subscription = subscriptionRepository.findByIdAndUser(id, user)
                 .orElseThrow(RecordNotFoundException::new);

@@ -14,14 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RateLimitConfig {
 
-    public static final int LOGIN_CAPACITY = 10;
-    public static final int LOGIN_REFILL_TOKENS = 10;
-    public static final int LOGIN_REFILL_SECONDS = 60;
-
-    public static final int REGISTER_CAPACITY = 5;
-    public static final int REGISTER_REFILL_TOKENS = 5;
-    public static final int REGISTER_REFILL_SECONDS = 3600;
-
     @Bean
     public ProxyManager<String> lettuceBasedProxyManager(
             @Value("${spring.data.redis.host}") String host,

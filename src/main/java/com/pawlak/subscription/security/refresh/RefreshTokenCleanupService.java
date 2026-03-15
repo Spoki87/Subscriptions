@@ -13,7 +13,7 @@ public class RefreshTokenCleanupService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Scheduled(fixedRate = 60 * 60 * 1000)
+    @Scheduled(fixedRateString = "${cleanup.refresh-token.interval-ms:3600000}")
     @Transactional
     public void removeExpiredAndRevokedTokens() {
         refreshTokenRepository.deleteAllExpiredOrRevoked(LocalDateTime.now());

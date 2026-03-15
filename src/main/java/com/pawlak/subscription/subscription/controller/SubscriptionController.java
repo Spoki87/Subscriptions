@@ -26,7 +26,7 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping()
-    public ResponseEntity<ApiResponse<List<SubscriptionResponse>>> getSubscriptionsByUser(@AuthenticationPrincipal User user, @PageableDefault(page = 0, size = 100) Pageable pageable) {
+    public ResponseEntity<ApiResponse<List<SubscriptionResponse>>> getSubscriptionsByUser(@AuthenticationPrincipal User user, @PageableDefault(page = 0, size = 20) Pageable pageable) {
         Page<SubscriptionResponse> response = subscriptionService.getSubscriptionsByUser(user, pageable);
         return ResponseEntity.ok(ApiResponse.success("Subscriptions retrieved", response));
     }

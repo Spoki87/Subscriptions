@@ -16,6 +16,7 @@ public class CreateSubscriptionRequest {
     @Size(max = 500, message = "Description must not exceed {max} characters")
     String description;
 
+    @NotNull(message = "Price is required")
     @Positive(message = "Price must be greater than zero")
     @Digits(integer = 8, fraction = 2, message = "Price format is invalid")
     BigDecimal price;
