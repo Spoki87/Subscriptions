@@ -1,5 +1,6 @@
 package com.pawlak.subscription.security.config;
 
+import com.pawlak.subscription.ratelimit.RateLimitFilter;
 import com.pawlak.subscription.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final AuthenticationManagerConfig authenticationManagerConfig;
+    private final RateLimitFilter rateLimitFilter;
 
     @Value("${cors.allowed-origins}")
     private String allowedOrigins;
@@ -46,6 +48,7 @@ public class SecurityConfig {
                     registry.anyRequest().authenticated();
                 })
                 .authenticationProvider(authenticationManagerConfig.authenticationProvider())
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

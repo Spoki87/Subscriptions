@@ -1,5 +1,6 @@
 package com.pawlak.subscription.security.jwt;
 
+import com.pawlak.subscription.ratelimit.RateLimitFilter;
 import com.pawlak.subscription.user.model.User;
 import com.pawlak.subscription.user.service.UserService;
 import jakarta.servlet.FilterChain;

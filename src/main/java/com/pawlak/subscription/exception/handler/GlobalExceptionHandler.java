@@ -32,7 +32,6 @@ public class GlobalExceptionHandler {
         return buildError(exception.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<ApiResponse<?>> handleDisabledException(DisabledException exception) {
         return buildError(exception.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -69,6 +68,7 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error", exception);
         return buildError("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
     private ResponseEntity<ApiResponse<?>> buildError(String message, HttpStatus status) {
         return ResponseEntity.status(status).body(ApiResponse.error(message));
