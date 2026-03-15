@@ -4,6 +4,12 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
+
   mail:
     host: ${EMAIL_SMTP_URL}
     port: 587
