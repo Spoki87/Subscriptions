@@ -1,5 +1,6 @@
 package com.pawlak.subscription.subscription.mapper;
 
+import com.pawlak.subscription.currency.Currency;
 import com.pawlak.subscription.subscription.dto.request.CreateSubscriptionRequest;
 import com.pawlak.subscription.subscription.dto.request.UpdateSubscriptionRequest;
 import com.pawlak.subscription.subscription.dto.response.SubscriptionResponse;
@@ -8,9 +9,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.math.BigDecimal;
+
 @Mapper(componentModel = "spring")
 public interface SubscriptionMapper {
-    SubscriptionResponse toResponse(Subscription subscription);
+    SubscriptionResponse toResponse(Subscription subscription, BigDecimal convertedPrice, Currency displayCurrency);
     void updateEntityFromRequest(UpdateSubscriptionRequest request, @MappingTarget Subscription subscription);
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "id", ignore = true)

@@ -3,10 +3,13 @@ package com.pawlak.subscription.token.resetpasswordtoken.service;
 import com.pawlak.subscription.email.EmailSender;
 import com.pawlak.subscription.exception.domain.ResetPasswordTokenExpiredException;
 import com.pawlak.subscription.exception.domain.ResetPasswordTokenNotFoundException;
+import com.pawlak.subscription.exception.domain.UserNotFoundException;
 import com.pawlak.subscription.token.emailbuilder.TokenEmailTemplateBuilder;
 import com.pawlak.subscription.token.resetpasswordtoken.model.ResetPasswordToken;
 import com.pawlak.subscription.token.resetpasswordtoken.repository.ResetPasswordTokenRepository;
 import com.pawlak.subscription.user.model.User;
+import com.pawlak.subscription.user.repository.UserRepository;
+import com.pawlak.subscription.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,13 +21,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ResetPasswordTokenService {
 
+    private final UserRepository userRepository;
     private final ResetPasswordTokenRepository resetPasswordTokenRepository;
     private final TokenEmailTemplateBuilder tokenEmailTemplateBuilder;
     private final EmailSender emailSender;
 
-    public void createToken(User user) {
+    public void createToken(String email) {
 
         String token = UUID.randomUUID().toString();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(UserNotFoundException::new);
 
         ResetPasswordToken resetPasswordToken = new ResetPasswordToken(user,token);
 

@@ -1,5 +1,6 @@
 package com.pawlak.subscription.user.dto.response;
 
+import com.pawlak.subscription.currency.Currency;
 import com.pawlak.subscription.user.model.Role;
 import lombok.Value;
 
@@ -10,4 +11,5 @@ public class UserResponse {
     UUID id;
     String email;
     Role role;
+    Currency currency;
 }

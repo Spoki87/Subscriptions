@@ -1,5 +1,7 @@
 package com.pawlak.subscription.subscription.service;
 
+import com.pawlak.subscription.currency.Currency;
+import com.pawlak.subscription.currency.ExchangeRateService;
 import com.pawlak.subscription.exception.domain.RecordNotFoundException;
 import com.pawlak.subscription.subscription.repository.SubscriptionRepository;
 import com.pawlak.subscription.subscription.dto.request.CreateSubscriptionRequest;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -20,15 +23,16 @@ import java.util.UUID;
 public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionMapper subscriptionMapper;
+    private final ExchangeRateService exchangeRateService;
 
     public Page<SubscriptionResponse> getSubscriptionsByUser(User user, Pageable pageable) {
         return subscriptionRepository.findAllByUser(user, pageable)
-                .map(subscriptionMapper::toResponse);
+                .map(sub -> subscriptionMapper.toResponse(sub, exchangeRateService.convert(sub.getPrice(), sub.getCurrency(),user.getCurrency()), user.getCurrency()));
     }
 
     public SubscriptionResponse getSubscriptionById(User user, UUID id) {
         return subscriptionRepository.findByIdAndUser(id, user)
-                .map(subscriptionMapper::toResponse)
+                .map(sub -> subscriptionMapper.toResponse(sub, exchangeRateService.convert(sub.getPrice(), sub.getCurrency(),user.getCurrency()), user.getCurrency()))
                 .orElseThrow(RecordNotFoundException::new);
     }
 
@@ -36,8 +40,8 @@ public class SubscriptionService {
         Subscription subscription = subscriptionMapper.toEntity(request);
         subscription.setUser(user);
         subscriptionRepository.save(subscription);
-        return subscriptionMapper.toResponse(subscription);
-    }
+        BigDecimal convertedPrice = exchangeRateService.convert(subscription.getPrice(), subscription.getCurrency(),user.getCurrency());
+        return subscriptionMapper.toResponse(subscription,convertedPrice,user.getCurrency());    }
 
     public SubscriptionResponse updateSubscriptionById(User user, UUID id, UpdateSubscriptionRequest request) {
         Subscription subscription = subscriptionRepository.findByIdAndUser(id, user)
@@ -45,13 +49,13 @@ public class SubscriptionService {
 
         subscriptionMapper.updateEntityFromRequest(request, subscription);
         subscriptionRepository.save(subscription);
-        return subscriptionMapper.toResponse(subscription);
+        BigDecimal convertedPrice = exchangeRateService.convert(subscription.getPrice(), subscription.getCurrency(),user.getCurrency());
+        return subscriptionMapper.toResponse(subscription,convertedPrice,user.getCurrency());
     }
 
     public void deleteSubscriptionById(User user, UUID id) {
         Subscription subscription = subscriptionRepository.findByIdAndUser(id, user)
                 .orElseThrow(RecordNotFoundException::new);
-
         subscriptionRepository.delete(subscription);
     }
 }

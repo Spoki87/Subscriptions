@@ -1,8 +1,6 @@
 package com.pawlak.subscription.user.controller;
 
-import com.pawlak.subscription.user.dto.request.ChangePasswordRequest;
-import com.pawlak.subscription.user.dto.request.CreateUserRequest;
-import com.pawlak.subscription.user.dto.request.NewPasswordRequest;
+import com.pawlak.subscription.user.dto.request.*;
 import com.pawlak.subscription.user.dto.response.UserResponse;
 import com.pawlak.subscription.user.model.User;
 import com.pawlak.subscription.user.service.UserService;
@@ -34,6 +32,12 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("Account confirmed"));
     }
 
+    @PatchMapping("/currency")
+    public ResponseEntity<ApiResponse<String>> changeCurrency(@AuthenticationPrincipal User user, @Valid @RequestBody ChangeCurrencyRequest request){
+        userService.changeCurrency(request,user);
+        return ResponseEntity.ok(ApiResponse.success("Currency changed"));
+    }
+
     @PostMapping("/change-password")
     public ResponseEntity<ApiResponse<String>> changePassword(@AuthenticationPrincipal User user, @Valid @RequestBody ChangePasswordRequest request){
         userService.changePassword(user,request);
@@ -41,8 +45,8 @@ public class UserController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<String>> resetPassword(@AuthenticationPrincipal User user){
-        userService.resetPassword(user);
+    public ResponseEntity<ApiResponse<String>> resetPassword(@RequestBody ResetPasswordRequest request){
+        userService.resetPassword(request);
         return ResponseEntity.ok(ApiResponse.success("Code sent to your email"));
     }
 

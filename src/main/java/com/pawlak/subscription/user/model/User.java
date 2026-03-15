@@ -1,5 +1,6 @@
 package com.pawlak.subscription.user.model;
 
+import com.pawlak.subscription.currency.Currency;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,6 +35,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    private Currency currency = Currency.PLN;
+
     public User(String username, String email, String password, Role role) {
         this.username = username;
         this.email = email;
@@ -48,6 +52,10 @@ public class User implements UserDetails {
 
     public void changePassword(String encodedPassword) {
         this.password = encodedPassword;
+    }
+
+    public void changeCurrency(Currency currency) {
+        this.currency = currency;
     }
 
     @Override

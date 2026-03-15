@@ -1,9 +1,7 @@
 package com.pawlak.subscription.subscription.dto.request;
 
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import com.pawlak.subscription.currency.Currency;
+import jakarta.validation.constraints.*;
 import lombok.Value;
 
 import java.math.BigDecimal;
@@ -20,4 +18,7 @@ public class CreateSubscriptionRequest {
     @Positive(message = "Price must be greater than zero")
     @Digits(integer = 8, fraction = 2, message = "Price format is invalid")
     BigDecimal price;
+
+    @NotNull(message = "Currency is required")
+    Currency currency;
 }

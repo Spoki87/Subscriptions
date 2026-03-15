@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(registry -> {
                     registry.requestMatchers("/api/user/register").permitAll();
                     registry.requestMatchers("/api/user/confirm").permitAll();
+                    registry.requestMatchers("/api/user/reset-password").permitAll();
                     registry.requestMatchers("/api/auth/**").permitAll();
                     registry.requestMatchers(
                             "/swagger-ui/**",

@@ -1,5 +1,6 @@
 package com.pawlak.subscription.subscription.dto.response;
 
+import com.pawlak.subscription.currency.Currency;
 import lombok.Value;
 
 import java.math.BigDecimal;
@@ -11,4 +12,7 @@ public class SubscriptionResponse {
     String name;
     String description;
     BigDecimal price;
+    Currency currency;
+    BigDecimal convertedPrice;
+    Currency displayCurrency;
 }

@@ -1,5 +1,6 @@
 package com.pawlak.subscription.subscription.model;
 
+import com.pawlak.subscription.currency.Currency;
 import com.pawlak.subscription.user.model.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -29,15 +30,25 @@ public class Subscription {
     @Setter
     private BigDecimal price;
 
+    @Enumerated(EnumType.STRING)
+    @Setter
+    private Currency currency = Currency.PLN;
+
+    @Enumerated(EnumType.STRING)
+    @Setter
+    private SubscriptionModel subscriptionModel = SubscriptionModel.MONTHLY;
+
     @ManyToOne
     @JoinColumn(name = "app_user_id")
     @Setter
     private User user;
 
-    public Subscription(String name, String description, BigDecimal price) {
+    public Subscription(String name, String description, BigDecimal price, Currency currency, SubscriptionModel subscriptionModel) {
         this.name = name;
         this.description = description;
         this.price = price;
+        this.currency = currency;
+        this.subscriptionModel = subscriptionModel;
     }
 
 }

@@ -1,13 +1,12 @@
 package com.pawlak.subscription.user.service;
 
+import com.pawlak.subscription.currency.Currency;
 import com.pawlak.subscription.exception.domain.InvalidPasswordException;
 import com.pawlak.subscription.exception.domain.UserNotFoundException;
 import com.pawlak.subscription.security.refresh.RefreshTokenService;
 import com.pawlak.subscription.token.registrationtoken.service.RegistrationTokenService;
 import com.pawlak.subscription.token.resetpasswordtoken.service.ResetPasswordTokenService;
-import com.pawlak.subscription.user.dto.request.ChangePasswordRequest;
-import com.pawlak.subscription.user.dto.request.CreateUserRequest;
-import com.pawlak.subscription.user.dto.request.NewPasswordRequest;
+import com.pawlak.subscription.user.dto.request.*;
 import com.pawlak.subscription.user.dto.response.UserResponse;
 import com.pawlak.subscription.user.model.User;
 import com.pawlak.subscription.user.model.Role;
@@ -58,7 +57,8 @@ public class UserService implements UserDetailsService {
         return new UserResponse(
                 user.getId(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole(),
+                user.getCurrency()
         );
     }
 
@@ -76,8 +76,14 @@ public class UserService implements UserDetailsService {
         registrationTokenService.confirmRegistration(token);
     }
 
-    public void resetPassword(User user) {
-        resetPasswordTokenService.createToken(user);
+    public void resetPassword(ResetPasswordRequest request) {
+        resetPasswordTokenService.createToken(request.getEmail());
+    }
+
+    @Transactional
+    public void changeCurrency(ChangeCurrencyRequest request, User user) {
+        user.changeCurrency(request.getCurrency());
+        userRepository.save(user);
     }
 
     @Transactional
