@@ -31,7 +31,7 @@ pipeline {
         stage('Run container') {
             steps {
                 sh """
-                    ENV_ARGS=\$(grep -v '^\$' /opt/env/spring.env | grep -v '^#' | sed 's/^/-e /' | tr '\n' ' ')
+                    ENV_ARGS=\$(grep -v '^\$' /opt/env/spring.env | grep -v '^#' | grep -v '^SPRING_PROFILES_ACTIVE' | sed 's/ *= */=/' | sed 's/^/-e /' | tr '\n' ' ')
                     docker run -d --name $CONTAINER_NAME \$ENV_ARGS -e SPRING_PROFILES_ACTIVE=prod -p 8081:8080 $IMAGE_NAME:$IMAGE_TAG
                 """
             }
