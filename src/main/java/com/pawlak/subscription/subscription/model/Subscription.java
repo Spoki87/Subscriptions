@@ -19,11 +19,14 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Setter
     private String name;
 
+    @Setter
     private String description;
 
     @Column(precision = 10, scale = 2)
+    @Setter
     private BigDecimal price;
 
     @ManyToOne

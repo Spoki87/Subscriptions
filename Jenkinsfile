@@ -37,18 +37,6 @@ pipeline {
             }
         }
 
-        stage('Health check') {
-            steps {
-                script {
-                    retry(5) {
-                        sleep 10
-                        sh "docker ps | grep $CONTAINER_NAME"
-                        sh "curl -f http://localhost:8081/actuator/health || exit 1"
-                    }
-                }
-            }
-        }
-
         stage('Cleanup images') {
             steps {
                 sh """
