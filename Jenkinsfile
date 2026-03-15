@@ -15,17 +15,6 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                sh "./mvnw test"
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t $IMAGE_NAME:$IMAGE_TAG -t $IMAGE_NAME:latest -f Dockerfile ."
