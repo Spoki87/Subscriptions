@@ -33,6 +33,10 @@ public class ResetPasswordTokenService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
 
+        if (!user.isEnabled()) {
+            throw new UserNotFoundException();
+        }
+
         ResetPasswordToken resetPasswordToken = new ResetPasswordToken(user,token);
 
         String html = tokenEmailTemplateBuilder.buildResetPasswordEmail(token);

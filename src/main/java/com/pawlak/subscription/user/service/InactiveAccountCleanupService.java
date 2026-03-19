@@ -2,6 +2,7 @@ package com.pawlak.subscription.user.service;
 
 import com.pawlak.subscription.token.registrationtoken.model.RegistrationToken;
 import com.pawlak.subscription.token.registrationtoken.repository.RegistrationTokenRepository;
+import com.pawlak.subscription.token.resetpasswordtoken.repository.ResetPasswordTokenRepository;
 import com.pawlak.subscription.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class InactiveAccountCleanupService {
 
     private final RegistrationTokenRepository registrationTokenRepository;
+    private final ResetPasswordTokenRepository resetPasswordTokenRepository;
     private final UserRepository userRepository;
 
     @Scheduled(fixedRateString = "${cleanup.inactive-account.interval-ms:3600000}")
@@ -25,19 +27,17 @@ public class InactiveAccountCleanupService {
         List<RegistrationToken> expiredTokens = registrationTokenRepository
                 .findAllByExpiredTimeBefore(LocalDateTime.now());
 
-        List<RegistrationToken> tokensOfInactiveUsers = expiredTokens.stream()
+        List<UUID> inactiveUserIds = expiredTokens.stream()
                 .filter(t -> !t.getUser().isEnabled())
-                .toList();
-
-        if (tokensOfInactiveUsers.isEmpty()) {
-            return;
-        }
-
-        List<UUID> inactiveUserIds = tokensOfInactiveUsers.stream()
                 .map(t -> t.getUser().getId())
                 .toList();
 
+        if (inactiveUserIds.isEmpty()) {
+            return;
+        }
+
         registrationTokenRepository.deleteAllByUserIds(inactiveUserIds);
+        resetPasswordTokenRepository.deleteAllByUserIds(inactiveUserIds);
         userRepository.deleteAllByIds(inactiveUserIds);
     }
 }
