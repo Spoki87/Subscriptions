@@ -30,12 +30,16 @@ A Spring Boot REST API for managing personal subscriptions with full authenticat
 - User registration with **email confirmation**
 - JWT authentication with **refresh token rotation**
 - Refresh tokens stored as **SHA-256 hashes** (never in plain text)
-- Automatic cleanup of expired tokens (scheduled, configurable interval)
+- Automatic cleanup of expired refresh tokens (scheduled, configurable interval)
+- **Automatic removal of inactive accounts** — accounts with expired registration tokens are deleted automatically
+- Password reset blocked for unconfirmed accounts
 - CRUD for subscriptions with **pagination**
 - **Multi-currency support** (PLN, USD, EUR) with live exchange rates from NBP API
 - Exchange rates **cached in Redis** (24h TTL)
 - **Spending reports** — summary, breakdown by billing model, breakdown by currency
 - Password change and password reset via email token
+- Email templates in **Polish** with Thymeleaf
+- Async email sending via **RabbitMQ**
 - **Rate limiting** on login and registration endpoints (Bucket4j + Redis)
 - Global exception handling with consistent API error responses
 - Database schema managed by **Flyway**
@@ -57,6 +61,7 @@ A Spring Boot REST API for managing personal subscriptions with full authenticat
 | Redis Client | Lettuce |
 | Mapping | MapStruct 1.5.5 |
 | Email | Spring Mail + Thymeleaf templates |
+| Async Messaging | RabbitMQ |
 | Exchange Rates | NBP API (National Bank of Poland) |
 | API Docs | SpringDoc OpenAPI 2.8.5 (Swagger UI) |
 | Build | Maven |
@@ -100,7 +105,7 @@ src/main/java/com/pawlak/subscription/
 │   └── emailbuilder/
 └── user/                        # User registration and management
     ├── controller/
-    ├── service/
+    ├── service/                 # UserService, InactiveAccountCleanupService
     ├── model/
     ├── repository/
     └── dto/
@@ -111,7 +116,7 @@ src/main/resources/
 ├── application-prod.yml         # Production profile
 ├── db/migration/                # Flyway SQL migrations
 │   └── V1__init_schema.sql
-└── templates/                   # Thymeleaf email templates
+└── templates/                   # Thymeleaf email templates (Polish)
 ```
 
 ---
@@ -124,6 +129,7 @@ src/main/resources/
 - Maven 3.9+
 - PostgreSQL 16
 - Redis
+- RabbitMQ
 - SMTP server (e.g. Gmail, Mailtrap)
 
 ### Environment Variables
@@ -140,11 +146,15 @@ Create a `.env` file or set the following variables in your environment:
 | `EMAIL_SMTP_URL` | SMTP host, e.g. `smtp.gmail.com` |
 | `EMAIL_USER` | SMTP username |
 | `MAIL_PASSWORD` | SMTP password |
-| `BASE_URL` | Base URL for email links, e.g. `http://localhost:8080` |
+| `BASE_URL` | Base URL used in email links — **must point to the frontend**, e.g. `https://your-domain.com` |
 | `CORS_ALLOWED_ORIGINS` | Allowed frontend origins, e.g. `http://localhost:3000` |
 | `REDIS_HOST` | Redis host, e.g. `localhost` |
 | `REDIS_PORT` | Redis port, e.g. `6379` |
 | `REDIS_PASSWORD` | Redis password (optional) |
+| `RABBITMQ_HOST` | RabbitMQ host, e.g. `localhost` |
+| `RABBITMQ_PORT` | RabbitMQ port, e.g. `5672` |
+| `RABBITMQ_USER` | RabbitMQ username |
+| `RABBITMQ_PASSWORD` | RabbitMQ password |
 
 ### Running Locally
 
@@ -153,7 +163,7 @@ Create a `.env` file or set the following variables in your environment:
 git clone https://github.com/your-username/subscription.git
 cd subscription
 
-# Start PostgreSQL and Redis
+# Start PostgreSQL, Redis and RabbitMQ
 docker-compose -f docker-compose.dev.yml up -d
 
 # Run with dev profile
@@ -179,10 +189,14 @@ docker run -p 8080:8080 \
   -e EMAIL_SMTP_URL=smtp.gmail.com \
   -e EMAIL_USER=you@gmail.com \
   -e MAIL_PASSWORD=your_app_password \
-  -e BASE_URL=http://localhost:8080 \
+  -e BASE_URL=https://your-domain.com \
   -e CORS_ALLOWED_ORIGINS=http://localhost:3000 \
   -e REDIS_HOST=host.docker.internal \
   -e REDIS_PORT=6379 \
+  -e RABBITMQ_HOST=host.docker.internal \
+  -e RABBITMQ_PORT=5672 \
+  -e RABBITMQ_USER=guest \
+  -e RABBITMQ_PASSWORD=guest \
   subscription-backend
 ```
 
@@ -253,7 +267,7 @@ Error responses:
 | `GET` | `/api/user/confirm?token=` | No | Confirm account via email token |
 | `PATCH` | `/api/user/currency` | Yes | Change preferred display currency |
 | `POST` | `/api/user/change-password` | Yes | Change password (revokes all sessions) |
-| `POST` | `/api/user/reset-password` | No | Send password reset link to email |
+| `POST` | `/api/user/reset-password` | No | Send password reset link to email (only for confirmed accounts) |
 | `POST` | `/api/user/set-new-password` | Yes | Set new password using reset token |
 
 > Registration is rate limited to **5 requests per hour** per IP.
@@ -383,7 +397,9 @@ All costs are normalized to **monthly** and converted to the user's preferred cu
 - **CORS:** restricted to origins defined in `CORS_ALLOWED_ORIGINS` (supports `PATCH`)
 - **Session policy:** stateless (no server-side HTTP sessions)
 - **Swagger UI:** disabled in production profile
-- Expired and revoked tokens are purged automatically (configurable via `cleanup.refresh-token.interval-ms`)
+- **Password reset** is blocked for unconfirmed accounts — returns 404 to prevent account enumeration
+- Expired and revoked refresh tokens are purged automatically (configurable via `cleanup.refresh-token.interval-ms`, default: 1h)
+- Inactive accounts (registration token expired, account never confirmed) are deleted automatically (configurable via `cleanup.inactive-account.interval-ms`, default: 1h)
 
 ---
 
